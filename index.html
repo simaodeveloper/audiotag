@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+    <audio src="http://kolber.github.io/audiojs/demos/mp3/juicy.mp3" controls></audio>
+
+    <button class="gain">+ gain</button>
+    <button class="less">- less</button>
+
+    <script src="./audio-tag.js"></script>
+    <script>
+        const audio = new AudioTag(document.querySelector('audio'));
+
+        audio.on('timeupdate', ({ formated }) => {
+            console.log(formated('MM:SS'));
+        });
+
+        const gain = document.querySelector('.gain');
+        const less = document.querySelector('.less');
+
+        gain.addEventListener('click', () => { audio.setVolume(audio.getVolume() + 10); })
+        less.addEventListener('click', () => { audio.setVolume(audio.getVolume() - 15); })
+    </script>
+</body>
+</html>
