@@ -17,8 +17,8 @@
     <script>
         const audio = new AudioTag(document.querySelector('audio'));
 
-        audio.on('timeupdate', ({ formated }) => {
-            console.log(formated('MM:SS'));
+        audio.on('timeupdate', (time) => {
+            console.log(time);
         });
 
         const gain = document.querySelector('.gain');

@@ -77,22 +77,63 @@ class Emmiter {
     }
 }
 
-class AudioTag extends Emmiter {
+class AudioTag {
   constructor(element, options) {
-    super();
     this.element = element;
     this.options = options;
     this.isMuted = false;
 
+    this.addMultipleExtension([
+        { 
+            name: 'events',
+            extension: new Emmiter,
+        }
+    ]);
+
+    this.addEventsModifiers('timeupdate', ($event) => {
+        const currentTime = this.element.currentTime;
+        const seconds = Math.floor(currentTime % 60);
+        const minutes = Math.floor(currentTime / 60);
+        const hours = Math.floor(currentTime / 3600);
+
+        return {
+            $event,
+            seconds,
+            minutes,
+            hours,
+            formated(format) {
+                let time;
+                switch (format) {
+                    case 'HH:MM':
+                        time = Utils.str_pad_left(hours, "0", 2) + ":" + Utils.str_pad_left(minutes, "0", 2);
+                        break;
+                    case 'MM:SS':
+                        time = Utils.str_pad_left(minutes, "0", 2) + ":" + Utils.str_pad_left(seconds.toFixed(0), "0", 2);
+                        break;
+                    default:
+                        time = Utils.str_pad_left(hours, "0", 2) + ":" + Utils.str_pad_left(minutes, "0", 2) + ":" + Utils.str_pad_left(seconds.toFixed(0), "0", 2);
+                }
+
+                return time;
+            },
+        };
+    });
+
     console.dir(this.element);
 
     this._preload();
-
-    this.loadDOMEvents();
   }
 
   _preload() {
     new Audio(this.element.src);
+  }
+
+  addExtension(name, extension) {
+    this[name] = extension;
+  }
+
+  addMultipleExtension(extensions) {
+      extensions.forEach(({ name, extension }) => this.addExtension(name, extension));
   }
 
   play() {
@@ -103,7 +144,7 @@ class AudioTag extends Emmiter {
     this.element.pause();
   }
 
-  skipTo() {}
+  seekTo() {}
 
   getVolume() {
     return Math.floor(this.element.volume * 100);
@@ -134,60 +175,31 @@ class AudioTag extends Emmiter {
     }
   }
 
-  loadDOMEvents() {
-    this.element.addEventListener("seeking", () => {
-      console.log("seeking");
-    });
+  addEventsModifiers(eventName, eventModifier) {
 
-    this.element.addEventListener("seeked", () => {
-      console.log("seeked");
-    });
+    if (!this.customEventsModifiers) {
+        this.customEventsModifiers = {};
+    }
 
-    this.element.addEventListener("volumechange", () => {
-      console.log("volumeChange");
-    });
+    this.customEventsModifiers[eventName] = eventModifier;
+  }
 
-    this.element.addEventListener("ended", () => {
-      console.log("ended");
-    });
+  handleArgsByEvent(eventName, $event) {
+      if (eventName in this.customEventsModifiers) {
+          return this.customEventsModifiers[eventName]($event);
+      } else {
+          return $event;
+      }
+  }
 
-    this.element.addEventListener("waiting", () => {
-      console.log("waiting ");
-    });
-
-    this.element.addEventListener("playing", () => {
-      console.log("playing");
-    });
-
-    this.element.addEventListener("progress", () => {
-      console.log("progress");
-    });
-
-    this.element.addEventListener("timeupdate", () => {
-        const seconds = this.element.currentTime;
-        const minutes = Math.floor(seconds / 60);
-        const hours = Math.floor(seconds / 3600);
-
-        this.dispatch("timeupdate", {
-            seconds,
-            minutes,
-            hours,
-            formated(format) {
-                let time;
-                switch (format) {
-                    case 'HH:MM':
-                        time = Utils.str_pad_left(hours, "0", 2) + ":" + Utils.str_pad_left(minutes, "0", 2);
-                        break;
-                    case 'MM:SS':
-                        time = Utils.str_pad_left(minutes, "0", 2) + ":" + Utils.str_pad_left(seconds.toFixed(0), "0", 2);
-                        break;
-                    default:
-                        time = Utils.str_pad_left(hours, "0", 2) + ":" + Utils.str_pad_left(minutes, "0", 2) + ":" + Utils.str_pad_left(seconds.toFixed(0), "0", 2);
-                }
-
-                return time;
-            },
+  on(event, listener) {
+    if(`on${event}` in this.element) {
+        this.element.addEventListener(event, ($event) => {
+            const args = this.handleArgsByEvent(event, $event);
+            this.events.dispatch(event, args);
         });
-    });
+    }
+
+    this.events.on(event, listener);
   }
 }
