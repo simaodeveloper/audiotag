@@ -1,7 +1,29 @@
 class Core extends Events {
-    constructor() {
+    constructor(audio) {
         super();
+        this.audio = this.setAudio(audio);
         this.addExtension("events", new Emmiter);
+    }
+
+    setAudio(audio) {
+        if (typeof audio === "string") {
+            this.createAudio(audio);
+        } else if (audio.nodeType === Node.ELEMENT_NODE) {
+            this.defineAudio(audio);
+        }
+    }
+
+    defineAudio(audioElement) {
+        this.element = audioElement;
+    }
+
+    createAudio(audioURL) {
+        this.defineAudio(document.createElement('audio'));
+        this.setURL(audioURL);
+    }
+
+    setURL(url) {
+        this.element.src = url;
     }
     
     addExtension(name, extension) {

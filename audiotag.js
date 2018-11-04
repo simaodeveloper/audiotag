@@ -1,7 +1,6 @@
 class AudioTag extends Core {
-    constructor(element, options) {
-        super();
-        this.element = element;
+    constructor(audio, options) {
+        super(audio);
         this.options = options;
         this.isMuted = false;
         this._preload();
