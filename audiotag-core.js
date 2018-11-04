@@ -1,8 +1,20 @@
 class Core extends Events {
-    constructor(audio) {
+    constructor(audio, options) {
         super();
         this.audio = this.setAudio(audio);
+        this.options = this.setOptions(options);
         this.addExtension("events", new Emmiter);
+    }
+
+    setOptions(options) {
+        const defaultOptions = {
+            formatTime: true,
+        };
+
+        return Object.assign(
+            defaultOptions, 
+            options
+        );
     }
 
     setAudio(audio) {

@@ -1,36 +1,28 @@
 AudioTag.addEventModifier("timeupdate", function($event) {
-    const currentTime   = this.element.currentTime; 
-    const seconds       = Utils.normalizeSeconds(currentTime);
-    const minutes       = Utils.convertSecondsToMinutes(currentTime);
-    const hours         = Utils.convertSecondsToHours(currentTime);
+    const currentTime   = this.element.currentTime;
 
-    const timeFormat = {
-        display(time, char = "0", leftpad = 2) {
-            return Utils.leftpad(time.toFixed(0), char, leftpad);
-        },
-        ["HH:MM"](hours, minutes) {
-            const { display } = timeFormat;
-            return `${display(hours)}:${display(minutes)}`;
-        },
-        ["MM:SS"](hours, minutes, seconds) {
-            const { display } = timeFormat;
-            return `${display(minutes)}:${display(seconds)}`;
-        },
-        ["HH:MM:SS"](hours, minutes, seconds) {
-            const { display } = timeFormat;
-            return `${display(hours)}:${display(minutes)}:${display(seconds)}`;
-        }
+    const time = {
+        seconds: Utils.normalizeSeconds(currentTime),
+        minutes: Utils.convertSecondsToMinutes(currentTime),
+        hours: Utils.convertSecondsToHours(currentTime)
     };
+
+    const timeFormat = (time, char = "0", leftpad = 2) => {
+        return Utils.leftpad(time.toFixed(0), char, leftpad);
+    };
+
+    Object.keys(time).forEach(propName => {
+        time[propName] = this.options.formatTime 
+            ? timeFormat(time[propName]) 
+            : time[propName];
+    });
+
+    const { seconds, minutes, hours } = time;
     
-    const args = {
+    return {
         event: $event,
         seconds,
         minutes,
-        hours,
-        formated(format) {
-            return timeFormat[format](hours, minutes, seconds);
-        }
+        hours
     };
-    
-    return args;
 });

@@ -10,6 +10,10 @@
     
     <!-- <audio src="http://kolber.github.io/audiojs/demos/mp3/juicy.mp3" controls></audio> -->
 
+    <p>
+        <span class="hours"></span>:<span class="minutes"></span>:<span class="seconds"></span>
+    </p> 
+
     <button class="gain">+ gain</button>
     <button class="less">- less</button>
 
@@ -32,8 +36,14 @@
         
         const audio = new AudioTag(URL1);
         
-        audio.on('timeupdate', ($event, { hours, minutes, seconds, formated }) => {
-            console.log(formated('HH:MM:SS'));
+        const $hours = document.querySelector('.hours');
+        const $minutes = document.querySelector('.minutes');
+        const $seconds = document.querySelector('.seconds');
+
+        audio.on('timeupdate', ($event, { hours, minutes, seconds }) => {
+                $hours.textContent      = hours;
+                $minutes.textContent    = minutes;
+                $seconds.textContent    = seconds;
         });
 
         const play = document.querySelector('.play');

@@ -19,10 +19,14 @@ class Utils {
         return (new Array(length + 1).join(pad) + string).slice(-length);
     }
     
+    static timeFormated(time, char = "0", leftpad = 2) {
+        return Utils.leftpad(time.toFixed(0), char, leftpad);
+    }
+    
     static normalizeSeconds(seconds) {
         return Math.floor(seconds % 60);
     }
-
+    
     static convertSecondsToMinutes(seconds) {
         return Math.floor(seconds / 60);
     }
