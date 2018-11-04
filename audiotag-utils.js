@@ -19,6 +19,10 @@ class Utils {
         return (new Array(length + 1).join(pad) + string).slice(-length);
     }
     
+    static normalizeSeconds(seconds) {
+        return Math.floor(seconds % 60);
+    }
+
     static convertSecondsToMinutes(seconds) {
         return Math.floor(seconds / 60);
     }
@@ -27,5 +31,3 @@ class Utils {
         return Math.floor(seconds / 3600);
     }
 }
-
-window.Utils = Utils;

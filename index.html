@@ -13,19 +13,26 @@
     <button class="gain">+ gain</button>
     <button class="less">- less</button>
 
+    <script src="./emmiter.js"></script>
+    <script src="./audiotag-utils.js"></script>
+    <script src="./audiotag-events.js"></script>
+    <script src="./audiotag-core.js"></script>
     <script src="./audiotag.js"></script>
+    <script src="./audiotag-extension-eventmodifier.js"></script>
     <script>
-        const audio = new AudioTag(document.querySelector('audio'));
 
-        audio.on('timeupdate', ({ formated }) => {
-            console.log(formated('MM:SS'));
+        
+        const audio = new AudioTag(document.querySelector('audio'));
+        
+        audio.on('timeupdate', ($event, { hours, minutes, seconds, formated }) => {
+            console.log(formated('HH:MM:SS'));
         });
 
-        const gain = document.querySelector('.gain');
-        const less = document.querySelector('.less');
+        // const gain = document.querySelector('.gain');
+        // const less = document.querySelector('.less');
 
-        gain.addEventListener('click', () => { audio.setVolume(audio.getVolume() + 10); })
-        less.addEventListener('click', () => { audio.setVolume(audio.getVolume() - 15); })
+        // gain.addEventListener('click', () => { audio.setVolume(audio.getVolume() + 10); })
+        // less.addEventListener('click', () => { audio.setVolume(audio.getVolume() - 15); })
     </script>
 </body>
 </html>

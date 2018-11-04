@@ -1,32 +1,32 @@
-class Events extends Emmiter {
+class Events {
 
     constructor() {
-        super();
-        this._customEvents = {};
+        Events.addEventModifier = Events.addEventModifier.bind(this);
     }
 
     static addEventModifier(eventName, modifier) {
-
-        if (!this._customEvents) {
-            this._customEvents = {};
+        if (!Events._customEvents) {
+            Events._customEvents = {};
         }
 
-        this._customEvents[eventName] = modifier;
+        Events._customEvents[eventName] = modifier;
     }
 
     handleArgsByEvent(eventName, $event) {
-        if (eventName in this._customEvents) {
-            return this._customEvents[eventName].call(this, $event);
+        if (eventName in Events._customEvents) {
+            return Events._customEvents[eventName].call(this, $event);
         } else {
-            return $event;
+            return {
+                event: $event
+            };
         }
     }
 
     on(eventName, listener) {
         if (`on${eventName}` in this.element) {
             this.element.addEventListener(eventName, ($event) => {
-                const { $event, ...args } = this.handleArgsByEvent(eventName, $event);
-                this.events.dispatch(eventName, $event, args);
+                const { event, ...args } = this.handleArgsByEvent(eventName, $event);
+                this.events.dispatch(eventName, event, args);
             });
         }
 
@@ -37,5 +37,3 @@ class Events extends Emmiter {
         this.events.off(eventName, listener);
     }
 }
-
-window.Events = Events;

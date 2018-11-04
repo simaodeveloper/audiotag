@@ -1,6 +1,7 @@
 class Core extends Events {
     constructor() {
         super();
+        this.addExtension("events", new Emmiter);
     }
     
     addExtension(name, extension) {
@@ -40,5 +41,3 @@ class Core extends Events {
         new Audio(this.element.src);
     }
 }
-
-window.Core = Core;

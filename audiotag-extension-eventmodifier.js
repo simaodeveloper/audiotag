@@ -1,7 +1,8 @@
 AudioTag.addEventModifier("timeupdate", function($event) {
-    const seconds = this.element.currentTime;
-    const minutes = Utils.convertSecondsToMinutes(seconds);
-    const hours = Utils.convertSecondsToHours(seconds);
+    const currentTime   = this.element.currentTime; 
+    const seconds       = Utils.normalizeSeconds(currentTime);
+    const minutes       = Utils.convertSecondsToMinutes(currentTime);
+    const hours         = Utils.convertSecondsToHours(currentTime);
 
     const timeFormat = {
         display(time, char = "0", leftpad = 2) {
@@ -21,8 +22,8 @@ AudioTag.addEventModifier("timeupdate", function($event) {
         }
     };
     
-    const event = {
-        $event,
+    const args = {
+        event: $event,
         seconds,
         minutes,
         hours,
@@ -31,5 +32,5 @@ AudioTag.addEventModifier("timeupdate", function($event) {
         }
     };
     
-    this.dispatch("timeupdate", event);
+    return args;
 });
