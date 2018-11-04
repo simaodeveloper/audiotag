@@ -1,20 +1,36 @@
 class Core extends Events {
     constructor(audio, options) {
         super();
-        this.audio = this.setAudio(audio);
-        this.options = this.setOptions(options);
+        this.audio      = this.setAudio(audio);
+        this.options    = this.setOptions(options);
         this.addExtension("events", new Emmiter);
+        this.setUp();
     }
 
     setOptions(options) {
         const defaultOptions = {
             formatTime: true,
+            volume: 0.5,
+            mute: false,
+            currentTime: 0
         };
 
-        return Object.assign(
+        Object.assign(
             defaultOptions, 
             options
         );
+    }
+
+    setUp() {
+        const {
+            currentTime,
+            mute,
+            volume
+        } = this.options;
+
+        this.seekTo(currentTime);
+        this.toggleMute(mute);
+        this.volume(volume);
     }
 
     setAudio(audio) {
@@ -46,6 +62,24 @@ class Core extends Events {
         extensions.forEach(({ name, extension }) =>
             this.addExtension(name, extension)
         );
+    }
+
+    getDuration() {
+        const { duration } = this.element;
+
+        const time = {
+            hours: Utils.convertSecondsToHours(duration),
+            minutes: Utils.convertSecondsToMinutes(duration),
+            seconds: Utils.normalizeSeconds(duration)
+        };
+
+        Object.keys(time).forEach(propName => {
+            time[propName] = this.options.formatTime
+                ? Utils.timeFormat(time[propName])
+                : time[propName];
+        });
+
+        return { duration, ...time };
     }
 
     getVolume() {

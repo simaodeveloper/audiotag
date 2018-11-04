@@ -12,19 +12,36 @@ class AudioTag extends Core {
     pause() {
         this.element.pause();
     }
+
+    duration() {
+        return this.getDuration();
+    }
     
-    seekTo() {}
-    rewind() {}
-    forward() {}
+    seekTo(time) {
+        this.element.currentTime = time;
+    }
+
+    rewind(time) {
+        this.element.currentTime -= time;
+    }
+
+    forward(time) {
+        this.element.currentTime += time;
+    }
 
     volume(volumeNumber) {
         const method = Utils.isNumber(volumeNumber) ? 'setVolume' : 'getVolume';
-        this[method](volumeNumber);
+        return this[method](volumeNumber);
+    }
+
+    isMuted() {
+        return this.element.muted;
     }
     
-    toggleMute() {
-        if (this.isMuted) {
-        }
+    toggleMute(bool) {
+        this.element.muted = bool !== undefined 
+            ? bool 
+            : !this.element.muted;
     }
 }
     
